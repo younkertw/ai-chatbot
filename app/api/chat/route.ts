@@ -7,7 +7,7 @@ import { nanoid } from '@/lib/utils'
 
 export const runtime = 'edge'
 
-const openai = new OpenAI({
+const defaultOpenAI  = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -22,9 +22,11 @@ export async function POST(req: Request) {
     })
   }
 
-  if (previewToken) {
-    configuration.apiKey = previewToken
-  }
+  const openai = previewToken
+    ? new OpenAI({
+        apiKey: previewToken,
+      })
+    : defaultOpenAI;
 
   const res = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
